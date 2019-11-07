@@ -24,7 +24,6 @@ class RefTest {
         fieldsToCleanup.add("seats");
         fieldsToCleanup.add("serial");
         fieldsToCleanup.add("cylinders");
-        fieldsToCleanup.add("price");
         fieldsToCleanup.add("mileage");
         fieldsToCleanup.add("engineVolume");
         fieldsToCleanup.add("rate");
@@ -38,7 +37,7 @@ class RefTest {
         try {
             // test incorrect field
             ref.cleanup(simpleObj, fieldsToCleanup, fieldsToOutput);
-            assertTrue(false);
+            fail();
         } catch (IllegalArgumentException e) {
             assertTrue(true);
         }
@@ -49,7 +48,6 @@ class RefTest {
         fieldsToOutput.add("seats");
         fieldsToOutput.add("serial");
         fieldsToOutput.add("cylinders");
-        fieldsToOutput.add("price");
         fieldsToOutput.add("mileage");
         fieldsToOutput.add("engineVolume");
         fieldsToOutput.add("rate");
@@ -63,7 +61,7 @@ class RefTest {
         try {
             // test incorrect field
             ref.cleanup(simpleObj, fieldsToCleanup, fieldsToOutput);
-            assertTrue(false);
+            fail();
         } catch (IllegalArgumentException e) {
             assertTrue(true);
         }
@@ -84,7 +82,7 @@ class RefTest {
 
         ref.cleanup(simpleObj, fieldsToCleanup, fieldsToOutput);
 
-        assertEquals(simpleObj.isWithMileage(), false);
+        assertFalse(simpleObj.isWithMileage());
         assertEquals(simpleObj.getSeats(), 0);
         assertEquals(simpleObj.getSerial(), '\u0000');
         assertEquals(simpleObj.getCylinders(), 0);
@@ -92,8 +90,8 @@ class RefTest {
         assertEquals(simpleObj.getMileage(), 0);
         assertEquals(simpleObj.getEngineVolume(), 0);
         assertEquals(simpleObj.getRate(), 0);
-        assertEquals(simpleObj.getWeight(), null);
-        assertEquals(simpleObj.getTransmission(), null);
+        assertNull(simpleObj.getWeight());
+        assertNull(simpleObj.getTransmission());
 
         fieldsToCleanup.clear();
 
@@ -129,7 +127,7 @@ class RefTest {
         try {
             // test incorrect field
             ref.cleanup(simpleObj, fieldsToCleanup, fieldsToOutput);
-            assertTrue(false);
+            fail();
         } catch (IllegalArgumentException e) {
             assertTrue(true);
         }
@@ -138,11 +136,11 @@ class RefTest {
 
         ref.cleanup(map, fieldsToCleanup, fieldsToOutput);
 
-        assertEquals(map.get("1"), null);
+        assertNull(map.get("1"));
         assertEquals(map.get("2"), "two");
-        assertEquals(map.get("3"), null);
+        assertNull(map.get("3"));
         assertEquals(map.get("4"), "four");
-        assertEquals(map.get(null), null);
+        assertNull(map.get(null));
 
         fieldsToCleanup.clear();
 
@@ -154,7 +152,7 @@ class RefTest {
         try {
             // test incorrect field
             ref.cleanup(simpleObj, fieldsToCleanup, fieldsToOutput);
-            assertTrue(false);
+            fail();
         } catch (IllegalArgumentException e) {
             assertTrue(true);
         }
