@@ -14,7 +14,7 @@ class RefTest {
     Ref ref = new Ref();
 
     @Test
-    void cleanup() throws NoSuchFieldException, IllegalAccessException {
+    void cleanupTest() throws NoSuchFieldException, IllegalAccessException {
 
         Set<String> fieldsToCleanup = new HashSet<>();
         Set<String> fieldsToOutput = new HashSet<>();
