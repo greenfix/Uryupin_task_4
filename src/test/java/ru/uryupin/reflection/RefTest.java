@@ -2,6 +2,7 @@ package ru.uryupin.reflection;
 
 import org.junit.jupiter.api.Test;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -11,10 +12,10 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class RefTest {
 
-    Ref ref = new Ref();
+    private Ref ref = new Ref();
 
     @Test
-    void cleanupTest() throws NoSuchFieldException, IllegalAccessException {
+    void cleanupTest() throws NoSuchFieldException, IllegalAccessException, NoSuchMethodException, InvocationTargetException {
 
         Set<String> fieldsToCleanup = new HashSet<>();
         Set<String> fieldsToOutput = new HashSet<>();
@@ -38,7 +39,7 @@ class RefTest {
             // test incorrect field
             ref.cleanup(simpleObj, fieldsToCleanup, fieldsToOutput);
             fail();
-        } catch (IllegalArgumentException e) {
+        } catch (IllegalArgumentException | NoSuchMethodException | InvocationTargetException e) {
             assertTrue(true);
         }
 
@@ -68,17 +69,17 @@ class RefTest {
 
         fieldsToOutput.remove("nothing_field");
 
-        simpleObj.setWithMileage(true);
-        simpleObj.setSeats((byte) 4);
-        simpleObj.setSerial('B');
-        simpleObj.setCylinders((short) 8);
-        simpleObj.setPrice(680000);
-        simpleObj.setMileage(150000L);
-        simpleObj.setEngineVolume(1.995F);
-        simpleObj.setRate(0.02458d);
-        simpleObj.setModel("Lexus IS200d");
-        simpleObj.setWeight(1545);
-        simpleObj.setTransmission(Transmission.AUTO);
+        simpleObj.setWithMileage();
+        simpleObj.setSeats();
+        simpleObj.setSerial();
+        simpleObj.setCylinders();
+        simpleObj.setPrice();
+        simpleObj.setMileage();
+        simpleObj.setEngineVolume();
+        simpleObj.setRate();
+        simpleObj.setModel();
+        simpleObj.setWeight();
+        simpleObj.setTransmission();
 
         ref.cleanup(simpleObj, fieldsToCleanup, fieldsToOutput);
 
@@ -90,22 +91,23 @@ class RefTest {
         assertEquals(simpleObj.getMileage(), 0);
         assertEquals(simpleObj.getEngineVolume(), 0);
         assertEquals(simpleObj.getRate(), 0);
+        assertNull(simpleObj.getModel());
         assertNull(simpleObj.getWeight());
         assertNull(simpleObj.getTransmission());
 
         fieldsToCleanup.clear();
 
-        simpleObj.setWithMileage(true);
-        simpleObj.setSeats((byte) 4);
-        simpleObj.setSerial('B');
-        simpleObj.setCylinders((short) 8);
-        simpleObj.setPrice(680000);
-        simpleObj.setMileage(150000L);
-        simpleObj.setEngineVolume(1.995F);
-        simpleObj.setRate(0.02458d);
-        simpleObj.setModel("Lexus IS200d");
-        simpleObj.setWeight(1545);
-        simpleObj.setTransmission(Transmission.AUTO);
+        simpleObj.setWithMileage();
+        simpleObj.setSeats();
+        simpleObj.setSerial();
+        simpleObj.setCylinders();
+        simpleObj.setPrice();
+        simpleObj.setMileage();
+        simpleObj.setEngineVolume();
+        simpleObj.setRate();
+        simpleObj.setModel();
+        simpleObj.setWeight();
+        simpleObj.setTransmission();
 
         ref.cleanup(simpleObj, fieldsToCleanup, fieldsToOutput);
 

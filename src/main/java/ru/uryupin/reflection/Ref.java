@@ -1,11 +1,13 @@
 package ru.uryupin.reflection;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.*;
 
-public class Ref {
+class Ref {
 
-    public void cleanup(Object object, Set<String> fieldsToCleanup, Set<String> fieldsToOutput) throws NoSuchFieldException, IllegalAccessException {
+    void cleanup(Object object, Set<String> fieldsToCleanup, Set<String> fieldsToOutput) throws NoSuchFieldException, IllegalAccessException, NoSuchMethodException, InvocationTargetException {
         if (object instanceof Map) {
             cleanupMap(object, fieldsToCleanup, fieldsToOutput);
         } else {
@@ -18,18 +20,24 @@ public class Ref {
      * @param fieldsToCleanup fieldsToCleanup
      * @param fieldsToOutput  fieldsToOutput
      */
-    private void cleanupMap(Object object, Set<String> fieldsToCleanup, Set<String> fieldsToOutput) {
+    private void cleanupMap(Object object, Set<String> fieldsToCleanup, Set<String> fieldsToOutput) throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
         Map map = (Map) object;
         if (!IsCorrectMapFields(map, fieldsToCleanup, fieldsToOutput)) {
             throw new IllegalArgumentException();
         }
         // Cleanup
+        Class clazz = map.getClass();
         for (String fieldName : fieldsToCleanup) {
-            map.remove(fieldName);
+            Method method = clazz.getDeclaredMethod("remove", Object.class);
+            method.setAccessible(true);
+            method.invoke(map, fieldName);
         }
         // Output
         for (String fieldName : fieldsToOutput) {
-            System.out.println(map.get(fieldName));
+            Method method = clazz.getDeclaredMethod("get", Object.class);
+            method.setAccessible(true);
+            Object obj = method.invoke(map, fieldName);
+            System.out.println(obj);
         }
     }
 
@@ -71,9 +79,9 @@ public class Ref {
     }
 
     /**
-     * @param object object
+     * @param object         object
      * @param fieldsToOutput fieldsToOutput
-     * @throws NoSuchFieldException NoSuchFieldException
+     * @throws NoSuchFieldException   NoSuchFieldException
      * @throws IllegalAccessException IllegalAccessException
      */
     private void doOutObj(Object object, Set<String> fieldsToOutput) throws NoSuchFieldException, IllegalAccessException {
@@ -90,7 +98,7 @@ public class Ref {
                 if (IsPrimitive(fieldType)) {
 
                     System.out.print("(primitive): ");
-                    System.out.println(String.valueOf(f));
+                    System.out.println(f);
                 } else {
                     System.out.print("(object): ");
                     System.out.println(f.toString());
@@ -152,7 +160,7 @@ public class Ref {
      * @param fieldsList1 fieldsList1
      * @return IsCorrectMapFields
      */
-    private boolean IsCorrectMapFields(Map map, Set<String> fieldsList, Set<String> fieldsList1) {
+    private boolean IsCorrectMapFields(Map map, Set<String> fieldsList, Set<String> fieldsList1) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException {
 
         return checkFieldsMap(map, fieldsList) && checkFieldsMap(map, fieldsList1);
     }
@@ -162,10 +170,13 @@ public class Ref {
      * @param fieldsList fieldsList
      * @return checkFieldsMap
      */
-    private boolean checkFieldsMap(Map map, Set<String> fieldsList) {
-        Set keysMap = map.keySet();
+    private boolean checkFieldsMap(Map map, Set<String> fieldsList) throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+        Class clazz = map.getClass();
         for (String fieldName : fieldsList) {
-            if (!keysMap.contains(fieldName)) {
+            Method method = clazz.getDeclaredMethod("containsKey", Object.class);
+            method.setAccessible(true);
+            boolean obj = (boolean) method.invoke(map, fieldName);
+            if (!obj) {
                 return false;
             }
         }
@@ -178,7 +189,7 @@ public class Ref {
      * @param fieldsList fieldsToCleanup
      * @return IsCorrectFields
      */
-    private boolean IsCorrectFieldsObj(Class clazz, Set<String> fieldsList, Set<String> fieldsList1) {
+    private boolean IsCorrectFieldsObj(Class<?> clazz, Set<String> fieldsList, Set<String> fieldsList1) {
 
         return checkFieldsObj(clazz, fieldsList) && checkFieldsObj(clazz, fieldsList1);
     }
@@ -188,7 +199,7 @@ public class Ref {
      * @param fieldsList fieldsList
      * @return checkFieldsObj
      */
-    private boolean checkFieldsObj(Class clazz, Set<String> fieldsList) {
+    private boolean checkFieldsObj(Class<?> clazz, Set<String> fieldsList) {
         List<String> strFieldsObj = new ArrayList<>();
         for (Field field : clazz.getDeclaredFields()) {
             String[] parts = field.toString().split("\\.");
