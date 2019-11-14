@@ -4,7 +4,6 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.*;
-
 class Ref {
 
     void cleanup(Object object, Set<String> fieldsToCleanup, Set<String> fieldsToOutput) throws NoSuchFieldException, IllegalAccessException, NoSuchMethodException, InvocationTargetException {
@@ -20,6 +19,7 @@ class Ref {
      * @param fieldsToCleanup fieldsToCleanup
      * @param fieldsToOutput  fieldsToOutput
      */
+    @SuppressWarnings("unchecked")
     private void cleanupMap(Object object, Set<String> fieldsToCleanup, Set<String> fieldsToOutput) throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
         Map map = (Map) object;
         if (!IsCorrectMapFields(map, fieldsToCleanup, fieldsToOutput)) {
@@ -170,6 +170,7 @@ class Ref {
      * @param fieldsList fieldsList
      * @return checkFieldsMap
      */
+    @SuppressWarnings("unchecked")
     private boolean checkFieldsMap(Map map, Set<String> fieldsList) throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
         Class clazz = map.getClass();
         for (String fieldName : fieldsList) {
